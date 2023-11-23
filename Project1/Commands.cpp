@@ -12,7 +12,10 @@ float marker_x = 0.0f, marker_y = 2.5f, marker_z = 0.0f;
 
 std::vector<Ball> balls;
 
+bool blockSwap = false;         // 연속적인 홀드를 방지
+
 void keyboard(unsigned char keyPressed, int x, int y) {
+  keyPressed = tolower(keyPressed);
   switch (keyPressed) {
     case 'w':
       if (camera_distance >
@@ -26,24 +29,50 @@ void keyboard(unsigned char keyPressed, int x, int y) {
       }
       break;
     case 'a':
-      camera_angle -= M_PI / 180.0f;  // 카메라를 왼쪽으로 회전
+      camera_angle += M_PI / 180.0f *2;  // 카메라를 왼쪽으로 회전
       break;
     case 'd':
-      camera_angle += M_PI / 180.0f;  // 카메라를 오른쪽으로 회전
+      camera_angle -= M_PI / 180.0f *2;  // 카메라를 오른쪽으로 회전
       break;
-    case ' ':  // 엔터 입력시 공 생성 case문안에서 선언하거나 초기화할때는 중괄호가 있어야함
+    case ' ':  // 스페이스 바 입력시 공 생성 case문안에서 선언하거나 초기화할때는 중괄호가 있어야함
     {
+      blockSwap = false;
       Ball ball;
       ball.x = marker_x;
       ball.y = marker_y;
       ball.z = marker_z;
       ball.vx = ball.vy = ball.vz = 0;
-      ball.mass = 1.0f;  // 질량은 반지름에 따라 달라야 할까?
+
+      ball.type = nextFruit.front();
+      nextFruit.erase(nextFruit.begin());
+      addFruit();
+      ball.radius = fruitSize.find(ball.type)->second;
+      ball.mass = fruitWeight.find(ball.type)->second;
+      ball.colorR = fruitColor.find(ball.type)->second[0];
+      ball.colorG = fruitColor.find(ball.type)->second[1];
+      ball.colorB = fruitColor.find(ball.type)->second[2];
+      ball.colorA = fruitColor.find(ball.type)->second[3];
+
       balls.push_back(ball);
     }
       break;
     case 'r':
       balls.clear();
+      hold = -1;
+      break;
+    case 9:         //tab키 입력시 홀드 기능
+      if (blockSwap == false) {
+        int front = nextFruit.front();
+        if (hold != -1) {
+          nextFruit[0] = hold;
+          hold = front;
+        } else {  // 홀드를 한번도 사용하지 않은경우
+          hold = front;
+          nextFruit.erase(nextFruit.begin());
+          addFruit();
+        }
+        blockSwap = true;
+      }
       break;
     
   }

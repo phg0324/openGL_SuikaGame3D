@@ -5,5 +5,8 @@
 
 bool areColliding(const Ball& a, const Ball& b);
 void handleCollision(Ball& a, Ball& b);
+void combineBalls(Ball& a, Ball& b);
+void colideWall(Ball& a);
 
+extern float restitution;
 #endif

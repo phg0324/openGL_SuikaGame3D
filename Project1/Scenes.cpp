@@ -7,8 +7,11 @@ void drawMainScene() {
   drawWireBoxWithoutTop();
   glPopMatrix();
 
+  std::vector<int> balls_to_remove;
+
   for (auto& ball : balls) {
     glPushMatrix();
+    glColor4f(ball.colorR, ball.colorG, ball.colorB, ball.colorA);
     glTranslatef(ball.x, ball.y, ball.z);
     glutSolidSphere(ball.radius, 100, 100);
     glPopMatrix();
@@ -19,39 +22,42 @@ void drawMainScene() {
 
     ball.vy -= 0.001;  // gravity
 
-    // 벽과 공의 충돌
-    if (ball.x - ball.radius < -2) {
-      ball.vx = -0.1f * ball.vx;  // 상수값이 변경됨에 따라 충돌 세기가 변경됨
-      ball.x = -2 + ball.radius;
-    } else if (ball.x + ball.radius > 2) {
-      ball.vx = -0.1f * ball.vx;
-      ball.x = 2 - ball.radius;
-    }
-
-    if (ball.y - ball.radius < -2) {
-      ball.vy = -0.1f * ball.vy;
-      ball.y = -2 + ball.radius;
-    }
-
-    if (ball.z - ball.radius < -2) {
-      ball.vz = -0.1f * ball.vz;
-      ball.z = -2 + ball.radius;
-    } else if (ball.z + ball.radius > 2) {
-      ball.vz = -0.1f * ball.vz;
-      ball.z = 2 - ball.radius;
-    }
+    colideWall(ball); 
 
     // 공과 공사이의 충돌 검사
-    for (auto& other : balls) {
+    for (int i = 0; i < balls.size(); i++) {
+      Ball& other = balls[i];
       if (&ball != &other && areColliding(ball, other)) {
-        handleCollision(ball, other);
+        if (ball.type == other.type) {
+          combineBalls(ball, other);
+          balls_to_remove.push_back(i);
+        } else {
+          handleCollision(ball, other);
+        }
       }
     }
   }
-  glColor3f(1.0f, 0.0f, 0.0f);  // 빨간색
+
+  std::sort(balls_to_remove.begin(), balls_to_remove.end(),
+            std::greater<>());
+  // 높은 인덱스부터 제거
+  for (int index : balls_to_remove) {
+    balls.erase(balls.begin() + index);
+  }
+  balls_to_remove.clear();
+
+  int type = nextFruit[0];
+  float radius = fruitSize.find(type)->second;
+  float mass = fruitWeight.find(type)->second;
+  GLfloat r = fruitColor.find(type)->second[0];
+  GLfloat g = fruitColor.find(type)->second[1];
+  GLfloat b = fruitColor.find(type)->second[2];
+  GLfloat a = fruitColor.find(type)->second[3];
+
+  glColor4f(r,g,b,a); 
   glPushMatrix();
   glTranslatef(marker_x, marker_y, marker_z);
-  glutSolidSphere(0.1, 20, 20);  // 여기에 앞으로 떨굴 공을 표시
+  glutSolidSphere(radius, 20, 20);  // 여기에 앞으로 떨굴 공을 표시
   glPopMatrix();
 
   glColor3f(1.0f, 0.0f, 0.0f);
@@ -61,4 +67,52 @@ void drawMainScene() {
   glEnd();
 
   glColor3f(1.0f, 1.0f, 1.0f);  // 다시 흰색으로 복구
+}
+
+void drawNextFruitScene() {
+  int distance = 1;
+  int i = 0;
+
+
+  for (int i = 1; i < 5; i++) {
+    int type = nextFruit[i];  
+    float radius = fruitSize.find(type)->second;
+    float mass = fruitWeight.find(type)->second;
+    GLfloat r = fruitColor.find(type)->second[0];
+    GLfloat g = fruitColor.find(type)->second[1];
+    GLfloat b = fruitColor.find(type)->second[2];
+    GLfloat a = fruitColor.find(type)->second[3];
+
+    glPushMatrix();
+    glColor4f(r, g, b, a);
+    glTranslatef(0, 13-i, 0);
+
+    glutSolidSphere(radius, 100, 100);
+    glPopMatrix();
+
+  }
+  glColor3f(1.0f, 1.0f, 1.0f);
+}
+
+void drawHoldScene() {
+
+   if (hold != -1) {
+    int type = hold;
+
+    float radius = fruitSize.find(type)->second;
+    float mass = fruitWeight.find(type)->second;
+    GLfloat r = fruitColor.find(type)->second[0];
+    GLfloat g = fruitColor.find(type)->second[1];
+    GLfloat b = fruitColor.find(type)->second[2];
+    GLfloat a = fruitColor.find(type)->second[3];
+
+    glColor4f(r, g, b, a);
+    glPushMatrix();
+    glTranslatef(0, 20, 0);
+    glutSolidSphere(radius, 20, 20); 
+    glPopMatrix();
+
+    glColor3f(1.0f, 1.0f, 1.0f);
+  }
+
 }

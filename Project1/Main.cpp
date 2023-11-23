@@ -14,7 +14,7 @@ void init();
 
 void display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+  
   float camera_x = camera_distance * sin(camera_angle);
   float camera_z = camera_distance * cos(camera_angle);
 
@@ -26,14 +26,14 @@ void display() {
   gluPerspective(60.0, (float)window_width / (float)window_height, 0.1, 100.0);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  gluLookAt(camera_x, 0, camera_z, 0, 0, 0, 0, 1, 0);  
+  gluLookAt(camera_x, 0, -camera_z, 0, 0, 0, 0, 1, 0);  
 
   drawMainScene();
 
   int mini_size = min(window_width, window_height) / 4;
 
   glViewport(window_width - mini_size, 0, mini_size, mini_size);
-  // ¹Ì´Ï ºä
+  // ¹Ì´Ï¸Ê ºä
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -42,8 +42,33 @@ void display() {
   glLoadIdentity();
   gluLookAt(0, 7, 0, 0, 0, 0, 0, 0, 1);
   
-
   drawMainScene();
+
+  glViewport(window_width - mini_size, window_height-(mini_size*2), mini_size, mini_size*2);
+  // next ºä
+
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  gluPerspective(60.0, 0.5, 0.1, 100.0);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  gluLookAt(0, 10, 5, 0, 10, 0, 0, 1, 0);
+
+  drawNextFruitScene();
+
+
+  glViewport(0, window_height - mini_size ,
+             mini_size, mini_size);
+  // È¦µå ºä
+
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  gluPerspective(60.0, 1.0, 0.1, 100.0);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  gluLookAt(0, 20, 2, 0, 20, 0, 0, 1, 0);
+
+  drawHoldScene();
 
   glutSwapBuffers();
 }
@@ -62,6 +87,7 @@ void reshape(int w, int h) {
 
 void init() {
   glClearColor(0.0, 0.0, 0.0, 0.0);
+  fruits();
   glEnable(GL_DEPTH_TEST);
   glShadeModel(GL_FLAT);
 }
