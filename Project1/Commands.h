@@ -6,6 +6,7 @@
 #include <vector>
 #include "Ball.h"
 #include <cmath>
+#include <cctype>
 
 using namespace std;
 
