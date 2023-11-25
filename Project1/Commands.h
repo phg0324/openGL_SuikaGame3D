@@ -4,9 +4,13 @@
 
 #include <glut.h>
 #include <vector>
-#include "Ball.h"
 #include <cmath>
 #include <cctype>
+#include <chrono>
+
+#include "Ball.h"
+#include "Scenes.h"
+#include "Collision.h"
 
 using namespace std;
 
