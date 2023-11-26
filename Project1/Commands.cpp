@@ -123,44 +123,10 @@ void special(int key, int x, int y) {  // 화살표키 조종
 
   // 표시가 박스를 벗어나지 않도록 최대, 최소값 설정
 
-  marker_x = std::max(-2.0f, std::min(2.0f, marker_x));
+  marker_x = max(-2.0f, min(2.0f, marker_x));
 
-  marker_z = std::max(-2.0f, std::min(2.0f, marker_z));
+  marker_z = max(-2.0f, min(2.0f, marker_z));
 
   glutPostRedisplay();
 }
 
-
-
-// 클릭으로 공 생성 (미사용)
-/*
-void mouse(int button, int state, int x, int y) {
-    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-    double modelview[16], projection[16];
-    int viewport[4];
-    double d_x, d_y, d_z;
-
-
-    glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
-    glGetDoublev(GL_PROJECTION_MATRIX, projection);
-    glGetIntegerv(GL_VIEWPORT, viewport);
-
-
-    double win_x = (double)x;
-    double win_y = (double)viewport[3] - (double)y;
-
-
-    gluUnProject(win_x, win_y, 0.0, modelview, projection, viewport, &d_x,
-&d_y, &d_z);
-
-    Ball ball;
-    ball.x = d_x;
-    ball.y = d_y;
-    ball.z = d_z;
-    ball.vx = ball.vy = ball.vz = 0;
-    ball.mass = 1.0f;
-    ball.radius = 0.1;
-    balls.push_back(ball);
-    }
-}
-*/

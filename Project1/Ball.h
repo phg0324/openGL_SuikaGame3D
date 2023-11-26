@@ -21,13 +21,8 @@ class Ball {
   GLfloat colorA;
 
   int type; 
-  /*
-  bool operator==(const Ball& other) const {
-    return x == other.x && y == other.y && z == other.z && type == other.type &&
-           radius == other.radius;
-  }
-  */
-  Ball();  // 持失切 識情
+
+  Ball(); 
 };
 void fruits();
 void addFruit();

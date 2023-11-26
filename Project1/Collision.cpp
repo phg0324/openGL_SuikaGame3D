@@ -60,17 +60,6 @@ void handleCollision(Ball& a, Ball& b) {
   friction(a);
   friction(b);
 
-  /*
-  float slideFactor = 0.00001f;  // 미끄러짐 정도를 조절하는 인자
-  if (a.mass > b.mass && a.y < b.y && a.x == b.x) {
-    a.vx += (rand() % 2 ? -1 : 1) * slideFactor;
-    a.vz += (rand() % 2 ? -1 : 1) * slideFactor;
-  } else if (b.mass > a.mass && b.vy < a.vy) {
-    b.vx += (rand() % 2 ? -1 : 1) * slideFactor;
-    b.vz += (rand() % 2 ? -1 : 1) * slideFactor;
-  }
-  */
-  // 공들의 위치를 수정하여 겹치지 않도록 함, 각 공의 반지름을 기반으로 계산
   float overlap = a.radius + b.radius - n_length;
   if (overlap > 0) {
     a.x += overlap * nx * (b.radius / (a.radius + b.radius));
@@ -82,7 +71,7 @@ void handleCollision(Ball& a, Ball& b) {
   }
 }
 void  friction(Ball& a) {
-  float friction = 0.1f;
+  float friction = 0.05f;
   a.vx -= friction * a.vx;
   a.vy -= friction * a.vy;
   a.vz -= friction * a.vz;
@@ -130,15 +119,6 @@ void combineBalls(Ball& a, Ball& b) {
   a.colorB = fruitColor.find(a.type)->second[2];
   a.colorA = fruitColor.find(a.type)->second[3];
   score += a.radius * 100;
-  /*
-  for (auto it = balls.begin(); it != balls.end(); ++it) {
-    if (&(*it) == &b) {
-      balls.erase(it);
-      break;
-    }
-  }
-  */
-  //현재 a와 b가 생김세가 동일하기 때문에 동시에 지워지는중 고치셈
 
 }
 

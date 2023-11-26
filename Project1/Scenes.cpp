@@ -1,36 +1,46 @@
 #include "Scenes.h"
 
+#pragma comment(lib, "glaux.lib")
+#pragma comment(lib, "legacy_stdio_definitions.lib")
+
 bool gameOver = false;
 bool prevGameOver = false;
 int scoreRanking[3];
 
+unsigned int ids[12];
+AUX_RGBImageRec* tex[12];
+GLUquadric* sphere;
+
+AUX_RGBImageRec* bgImage;
+GLuint bgTexture;
+
+
+GLfloat diffuse0[];
+GLfloat no_emission[];
+GLfloat light_emission[];
+
+
 void drawMainScene() {
+  switchTL(false);
+
   glPushMatrix();
   glScalef(2.0, 2.0, 2.0);
   drawWireBoxWithoutTop();
   glPopMatrix();
 
   glPushMatrix();
-
   glColor3f(0.5,0,0);
   glScalef(2.0, 2.0, 2.0);
   drawBoxTop();
-
   glPopMatrix();
-
+  
   glColor3f(1.0f, 1.0f, 1.0f);  // 다시 흰색으로 복구
   std::vector<int> balls_to_remove;
 
-  /*
-  GLfloat light_position[] = {0.0, 0.0, 0.0, 1.0};
-  
-  glEnable(GL_LIGHTING);
-  glEnable(GL_LIGHT0);
-  glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-  glEnable(GL_COLOR_MATERIAL);
-  */
   for (auto& ball : balls) {
     glPushMatrix();
+
+    switchTL(true);
 
     if (outSideBox(ball)) {
       GLfloat flicker = (sin(glutGet(GLUT_ELAPSED_TIME) * 0.01) + 1.0) /
@@ -41,8 +51,19 @@ void drawMainScene() {
       glColor4f(ball.colorR, ball.colorG, ball.colorB, ball.colorA);
     }
 
+    GLfloat rgbaColor[] = {ball.colorR, ball.colorG, ball.colorB, ball.colorA}; 
+
     glTranslatef(ball.x, ball.y, ball.z);
-    glutSolidSphere(ball.radius, 100, 100);
+
+    glMaterialfv(GL_FRONT, GL_EMISSION, light_emission);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse0);
+    glMaterialfv(GL_FRONT, GL_AMBIENT, rgbaColor);
+    glBindTexture(GL_TEXTURE_2D, ids[ball.type]);
+
+    gluSphere(sphere,ball.radius, 100, 100);
+
+    switchTL(false);
+
     glPopMatrix();
 
     if (gameOver) {
@@ -94,19 +115,8 @@ void drawMainScene() {
   balls_to_remove.clear();
 
   int type = nextFruit[0];
-  float radius = fruitSize.find(type)->second;
-  float mass = fruitWeight.find(type)->second;
-  GLfloat r = fruitColor.find(type)->second[0];
-  GLfloat g = fruitColor.find(type)->second[1];
-  GLfloat b = fruitColor.find(type)->second[2];
-  GLfloat a = fruitColor.find(type)->second[3];
-
-
-  glColor4f(r,g,b,a); 
-  glPushMatrix();
-  glTranslatef(marker_x, marker_y, marker_z);
-  glutSolidSphere(radius, 20, 20);  // 여기에 앞으로 떨굴 공을 표시
-  glPopMatrix();
+  
+  drawBall(type, marker_x, marker_y,marker_z);
 
   glColor3f(1.0f, 0.0f, 0.0f);
   glBegin(GL_LINES);
@@ -130,12 +140,6 @@ void drawNextFruitScene() {
 
   for (int i = 1; i < 5; i++) {
     int type = nextFruit[i];  
-    float radius = fruitSize.find(type)->second;
-    float mass = fruitWeight.find(type)->second;
-    GLfloat r = fruitColor.find(type)->second[0];
-    GLfloat g = fruitColor.find(type)->second[1];
-    GLfloat b = fruitColor.find(type)->second[2];
-    GLfloat a = fruitColor.find(type)->second[3];
 
     glPushMatrix();
     glTranslatef(0, 13-i, 0);
@@ -149,14 +153,7 @@ void drawNextFruitScene() {
     glEnd();
     glPopMatrix();
 
-    glPushMatrix();
-    glColor4f(r, g, b, a);
-    glTranslatef(0, 13-i, 0);
-
-    glutSolidSphere(radius, 100, 100);
-    glPopMatrix();
-
-
+    drawBall(type, 0, 13 - i, 0);
   }
   glColor3f(1.0f, 1.0f, 1.0f);
 }
@@ -182,19 +179,8 @@ void drawHoldScene() {
    if (hold != -1) {
     int type = hold;
     holdText = "Hold";
-    float radius = fruitSize.find(type)->second;
-    float mass = fruitWeight.find(type)->second;
-    GLfloat r = fruitColor.find(type)->second[0];
-    GLfloat g = fruitColor.find(type)->second[1];
-    GLfloat b = fruitColor.find(type)->second[2];
-    GLfloat a = fruitColor.find(type)->second[3];
 
-
-    glColor4f(r, g, b, a);
-    glPushMatrix();
-    glTranslatef(0, 20, 0);
-    glutSolidSphere(radius, 20, 20); 
-    glPopMatrix();
+    drawBall(type, 0, 20, 0);
 
     glColor3f(1.0f, 1.0f, 1.0f);
   }
@@ -261,8 +247,7 @@ void drawRankings(){
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
-  gluOrtho2D(0.0, window_width, 0.0,
-             window_height);  // Set up an orthographic projection
+  gluOrtho2D(0.0, window_width, 0.0, window_height);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
@@ -291,3 +276,119 @@ void drawRankings(){
   glPopMatrix();
   glMatrixMode(GL_MODELVIEW);
 }
+
+void texturing() {
+
+  tex[0] = auxDIBImageLoad("textures/Cherry.bmp");
+  tex[1] = auxDIBImageLoad("textures/Strawberry.bmp");
+  tex[2] = auxDIBImageLoad("textures/Grape.bmp");
+  tex[3] = auxDIBImageLoad("textures/Orange.bmp");
+  tex[4] = auxDIBImageLoad("textures/Persimmon.bmp");
+  tex[5] = auxDIBImageLoad("textures/Apple.bmp");
+  tex[6] = auxDIBImageLoad("textures/Pear.bmp");
+  tex[7] = auxDIBImageLoad("textures/Peach.bmp");
+  tex[8] = auxDIBImageLoad("textures/Pineapple.bmp");
+  tex[9] = auxDIBImageLoad("textures/Melon.bmp");
+  tex[10] = auxDIBImageLoad("textures/Watermelon.bmp");
+  tex[11] = auxDIBImageLoad("textures/Background.bmp");
+
+  for (int i = 0; i < 12; i++) {
+      glGenTextures(1, &ids[i]);
+      glBindTexture(GL_TEXTURE_2D, ids[i]);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+      glTexImage2D(GL_TEXTURE_2D, 0, 3, tex[i]->sizeX, tex[i]->sizeY, 0, GL_RGB,
+                   GL_UNSIGNED_BYTE, tex[i]->data);
+      glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+  }
+
+  glEnable(GL_TEXTURE_2D);
+  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+  sphere = gluNewQuadric();
+  gluQuadricDrawStyle(sphere, GLU_FILL);
+  gluQuadricNormals(sphere, GLU_SMOOTH);
+  gluQuadricOrientation(sphere, GLU_OUTSIDE);
+  gluQuadricTexture(sphere, GL_TRUE);
+}
+void backgroundTexturing() {
+  glDisable(GL_TEXTURE_GEN_S);
+  glDisable(GL_TEXTURE_GEN_T);
+
+  glEnable(GL_LIGHTING);
+  glEnable(GL_TEXTURE_2D);
+  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+  glMatrixMode(GL_PROJECTION);  
+  glPushMatrix();              
+  glLoadIdentity();             
+  gluOrtho2D(0.0, window_width, 0.0, window_height);  
+
+  glMatrixMode(GL_MODELVIEW);  
+  glPushMatrix();              
+  glLoadIdentity();            
+
+  glDisable(GL_DEPTH_TEST);  // 깊이 테스트 비활성화
+
+  glBindTexture(GL_TEXTURE_2D, ids[11]);
+  glBegin(GL_QUADS);
+  glTexCoord2f(0.0f, 0.0f);
+  glVertex2f(0.0f, 0.0f);
+  glTexCoord2f(1.0f, 0.0f);
+  glVertex2f(window_width, 0.0f);
+  glTexCoord2f(1.0f, 1.0f);
+  glVertex2f(window_width, window_height);
+  glTexCoord2f(0.0f, 1.0f);
+  glVertex2f(0.0f, window_height);
+  glEnd();
+
+  glEnable(GL_DEPTH_TEST);  
+
+  glPopMatrix();  
+
+  glMatrixMode(GL_PROJECTION);  
+  glPopMatrix();  
+
+  glMatrixMode(GL_MODELVIEW);  
+
+  glDisable(GL_TEXTURE_2D);
+  glDisable(GL_LIGHTING);
+}
+
+void switchTL(bool trig) { 
+    if (trig) {
+      glEnable(GL_LIGHTING);
+      glEnable(GL_TEXTURE_2D);
+    }
+    else {
+      glDisable(GL_TEXTURE_2D);
+      glDisable(GL_LIGHTING); 
+    }
+}
+
+void drawBall(int t, GLfloat transX, GLfloat transY, GLfloat transZ) {
+    float radius = fruitSize.find(t)->second;
+    float mass = fruitWeight.find(t)->second;
+    GLfloat r = fruitColor.find(t)->second[0];
+    GLfloat g = fruitColor.find(t)->second[1];
+    GLfloat b = fruitColor.find(t)->second[2];
+    GLfloat a = fruitColor.find(t)->second[3];
+
+    GLfloat rgbaColor[] = {r,g,b,a};
+    switchTL(true);
+
+
+    glPushMatrix();
+    glTranslatef(transX, transY, transZ);
+    glMaterialfv(GL_FRONT, GL_EMISSION, light_emission);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse0);
+    glMaterialfv(GL_FRONT, GL_AMBIENT, rgbaColor);
+    glBindTexture(GL_TEXTURE_2D, ids[t]);
+    gluSphere(sphere,radius, 100, 100);  
+    glPopMatrix();
+
+    switchTL(false);
+
+
+}
+
