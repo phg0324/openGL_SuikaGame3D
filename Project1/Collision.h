@@ -13,3 +13,4 @@ bool outSideBox(Ball& a);
 extern float restitution;
 extern int score;
 #endif
+
