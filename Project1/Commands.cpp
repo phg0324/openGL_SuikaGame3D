@@ -50,12 +50,12 @@ void keyboard(unsigned char keyPressed, int x, int y) {
         auto now = std::chrono::steady_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
             now - last_space_time);
-        /*
+        
         if (duration.count() < 1000) {
           // 스페이스바를 누른지 1초가 지나지 않았으면 무시
           break;
         }
-        */
+        
         last_space_time = now;
 
         blockSwap = false;
@@ -134,4 +134,3 @@ void special(int key, int x, int y) {  // 화살표키 조종
 
   glutPostRedisplay();
 }
-
