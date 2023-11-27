@@ -98,8 +98,13 @@ void drawMainScene() {
   std::sort(balls_to_remove.begin(), balls_to_remove.end(),
             std::greater<>());
   // 높은 인덱스부터 제거
-  for (int index : balls_to_remove) {
-    balls.erase(balls.begin() + index);
+  for (int i = 0; i < balls_to_remove.size(); i++) {
+    if (i < balls_to_remove.size() - 1) {
+      if (balls_to_remove[i] == balls_to_remove[i + 1]) {
+        continue;
+      }
+    }
+    balls.erase(balls.begin() + balls_to_remove[i]);
   }
   balls_to_remove.clear();
 
