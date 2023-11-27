@@ -22,11 +22,13 @@ void drawNextFruitScene();
 void drawHoldScene();
 void drawGameOverScene();
 void drawRankings();
+void drawHelp();
 
 void showScoreScene();
 void showHoldText();
 void texturing();
 void backgroundTexturing();
+
 void switchTL(bool trig);
 void drawBall(int t, GLfloat transX, GLfloat transY, GLfloat transZ);
 

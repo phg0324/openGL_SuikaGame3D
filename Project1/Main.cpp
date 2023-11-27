@@ -73,6 +73,7 @@ void display() {
     
     drawMainScene();
     drawRankings();
+    drawHelp();
     if (gameOver) {
       drawGameOverScene();
     }

@@ -122,7 +122,7 @@ void drawMainScene() {
   glColor3f(0.5, 0.5, 0.5);
   glScalef(2.0, 2.0, 2.0);
   drawBoxLine();
-  drawBoxBottom();
+  
   glPopMatrix();
 
   glPushMatrix();
@@ -139,8 +139,10 @@ void drawMainScene() {
   glColor4f(1.0, 1.0, 1.0, 0.1);
   glScalef(2.0, 2.0, 2.0);
   drawWireBoxWithoutTop();
+  drawBoxBottom();
+  
   glPopMatrix();
-
+  
   glDisable(GL_BLEND);
 
   
@@ -296,6 +298,41 @@ void drawRankings(){
   glMatrixMode(GL_MODELVIEW);
 }
 
+void drawHelp(){
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity();
+  gluOrtho2D(0.0, window_width, 0.0, window_height);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+
+  glColor3f(0.5f, 0.75f, 1.0f);
+
+  glRasterPos2f(50, 200);
+
+  for (char c : "Move Camera: W A S D") {
+      glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+  }
+  glRasterPos2f(50, 170);
+  for (char c : "Move Fruit: Arrow Keys") {
+      glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+  }
+  glRasterPos2f(50, 140);
+  for (char c : "Deploy Fruit: Space Bar") {
+      glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+  }
+  glRasterPos2f(50, 110);
+  for (char c : "Hold Fruit: Tab Key") {
+      glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+  }
+  glRasterPos2f(50, 80);
+  for (char c : "Restart Game: R ") {
+      glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+  }
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+  glMatrixMode(GL_MODELVIEW);
+}
 void texturing() {
 
   tex[0] = auxDIBImageLoad("textures/Cherry.bmp");
@@ -309,7 +346,7 @@ void texturing() {
   tex[8] = auxDIBImageLoad("textures/Pineapple.bmp");
   tex[9] = auxDIBImageLoad("textures/Melon.bmp");
   tex[10] = auxDIBImageLoad("textures/Watermelon.bmp");
-  tex[11] = auxDIBImageLoad("textures/Background4.bmp");
+  tex[11] = auxDIBImageLoad("textures/Background.bmp");
 
   for (int i = 0; i < 12; i++) {
       glGenTextures(1, &ids[i]);
@@ -330,6 +367,7 @@ void texturing() {
   gluQuadricOrientation(sphere, GLU_OUTSIDE);
   gluQuadricTexture(sphere, GL_TRUE);
 }
+
 void backgroundTexturing() {
   glDisable(GL_TEXTURE_GEN_S);
   glDisable(GL_TEXTURE_GEN_T);
@@ -410,4 +448,3 @@ void drawBall(int t, GLfloat transX, GLfloat transY, GLfloat transZ) {
 
 
 }
-
