@@ -2,20 +2,6 @@
 #include "Commands.h"
 #include <cmath>
 
-/*
-//////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-        handle Coliisions
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////
-*/
-
 float restitution = 0.0001; // 반발계수, 높아지면 더 세게 튕겨짐
 int score = 0;
 
@@ -47,7 +33,7 @@ void handleCollision(Ball& a, Ball& b) {
   float j = -(1.0f + restitution) * (rvx * nx + rvy * ny + rvz * nz) /
             (1.0f / a.mass + 1.0f / b.mass);
 
-  // 충돌에 따른 속도 변화. y축 아래 방향의 속도 변화는 무시
+  // 충돌에 따른 속도 변화
 
   a.vx += j * nx / a.mass;
   a.vy += j * ny / a.mass; 
@@ -60,6 +46,7 @@ void handleCollision(Ball& a, Ball& b) {
   friction(a);
   friction(b);
 
+  // 공들이 겹쳐지지 않도록 위치 보정
   float overlap = a.radius + b.radius - n_length;
   if (overlap > 0) {
     a.x += overlap * nx * (b.radius / (a.radius + b.radius));
@@ -82,7 +69,7 @@ void colideWall(Ball& ball) {
   // 벽과 공의 충돌
   if (ball.x - ball.radius < -2) {
     ball.vx =
-        -restitution * ball.vx;  // 상수값이 변경됨에 따라 충돌 세기가 변경됨
+        -restitution * ball.vx; 
     ball.x = -2 + ball.radius;
   } else if (ball.x + ball.radius > 2) {
     ball.vx = -restitution * ball.vx;

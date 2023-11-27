@@ -8,7 +8,7 @@ float camera_angle = 0.0f;     // 카메라 각도
 float min_distance = 6.0f;     // 카메라와 상자의 최소 거리
 float max_distance = 13.0f;    // 카메라와 상자의 최소 거리
 
-float marker_x = 0.0f, marker_y = 2.0f, marker_z = 0.0f;
+float marker_x = 0.0f, marker_y = 2.0f, marker_z = 0.0f;  // 공을 놓을 위치
 
 std::vector<Ball> balls;
 std::chrono::steady_clock::time_point last_space_time;
@@ -44,8 +44,7 @@ void keyboard(unsigned char keyPressed, int x, int y) {
       case 'd':
         camera_angle -= M_PI / 180.0f * 2;  // 카메라를 오른쪽으로 회전
         break;
-      case ' ':  // 스페이스 바 입력시 공 생성 case문안에서 선언하거나
-                 // 초기화할때는 중괄호가 있어야함
+      case ' ':  // 스페이스 바 입력시 공 생성 
       {
         auto now = std::chrono::steady_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
