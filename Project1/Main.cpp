@@ -25,8 +25,6 @@ GLfloat no_emission[] = {0.0, 0.0, 0.0, 1.0};
 
 void display() {
 
-  
-
   float camera_x = camera_distance * sin(camera_angle);
   float camera_z = camera_distance * cos(camera_angle);
 
@@ -158,7 +156,6 @@ int main(int argc, char** argv) {
 
   glutSpecialFunc(special);
   glutKeyboardFunc(keyboard);
-  //glutMouseFunc(mouse);
   glutMainLoop();
   return 0;
 }

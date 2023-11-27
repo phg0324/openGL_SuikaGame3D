@@ -22,8 +22,6 @@ GLfloat light_emission[];
 
 void drawMainScene() {
 
-  
-  glColor3f(1.0f, 1.0f, 1.0f);  // 다시 흰색으로 복구
   std::vector<int> balls_to_remove;
 
   for (auto& ball : balls) {
@@ -32,14 +30,11 @@ void drawMainScene() {
     switchTL(true);
 
     if (outSideBox(ball)) {
-      GLfloat flicker = (sin(glutGet(GLUT_ELAPSED_TIME) * 0.01) + 1.0) /
-                        2.0;  // 0.0 ~ 1.0 사이의 값
+      switchTL(false);
+      GLfloat flicker = (sin(glutGet(GLUT_ELAPSED_TIME) * 0.01) + 1.0) / 2.0;  
       glColor4f(ball.colorR * flicker, ball.colorG * flicker,
                 ball.colorB * flicker, ball.colorA);
-    } else {
-      glColor4f(ball.colorR, ball.colorG, ball.colorB, ball.colorA);
     }
-
     GLfloat rgbaColor[] = {ball.colorR, ball.colorG, ball.colorB, ball.colorA}; 
 
     glTranslatef(ball.x, ball.y, ball.z);
@@ -64,7 +59,7 @@ void drawMainScene() {
     ball.y += ball.vy;
     ball.z += ball.vz;
 
-    ball.vy -= 0.0005;  // gravity
+    ball.vy -= 0.0005;  // 중력
 
     colideWall(ball);
   }
@@ -97,6 +92,7 @@ void drawMainScene() {
   prevGameOver = gameOver;
   std::sort(balls_to_remove.begin(), balls_to_remove.end(),
             std::greater<>());
+
   // 높은 인덱스부터 제거
   for (int i = 0; i < balls_to_remove.size(); i++) {
     if (i < balls_to_remove.size() - 1) {
@@ -110,18 +106,17 @@ void drawMainScene() {
 
   int type = nextFruit[0];
   
-  drawBall(type, marker_x, marker_y,marker_z);
+  drawBall(type, marker_x, marker_y,marker_z);  // 현재 떨굴 공
 
-  glColor3f(1.0f, 0.0f, 0.0f);
+  glColor3f(1.0f, 0.0f, 0.0f);                  // 현재 떨굴 위치
   glBegin(GL_LINES);
-  glVertex3f(marker_x, -2.0f, marker_z);  // 박스 바닥부터 천장까지 이어줌
+  glVertex3f(marker_x, -2.0f, marker_z);  
   glVertex3f(marker_x, 2.0f, marker_z);
   glEnd();
 
   glColor3f(1.0f, 1.0f, 1.0f);  // 다시 흰색으로 복구
 
   switchTL(false);
-
 
   glPushMatrix();
   glColor3f(0.5, 0.5, 0.5);
@@ -159,7 +154,6 @@ void drawNextFruitScene() {
 
   glRasterPos2f(-1.0f, 12.4f);
 
-  // 문자열 출력
   for (char c : "Next") {
     glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
   }
@@ -241,8 +235,7 @@ void drawGameOverScene() {
   glMatrixMode(GL_PROJECTION);
   glPushMatrix(); 
   glLoadIdentity();
-  gluOrtho2D(0.0, window_width, 0.0,
-                window_height);  // Set up an orthographic projection
+  gluOrtho2D(0.0, window_width, 0.0, window_height);  
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
@@ -390,7 +383,7 @@ void backgroundTexturing() {
   glPushMatrix();              
   glLoadIdentity();            
 
-  glDisable(GL_DEPTH_TEST);  // 깊이 테스트 비활성화
+  glDisable(GL_DEPTH_TEST); 
 
   glBindTexture(GL_TEXTURE_2D, ids[11]);
   glBegin(GL_QUADS);
