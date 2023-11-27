@@ -123,9 +123,14 @@ void special(int key, int x, int y) {  // 화살표키 조종
 
   // 표시가 박스를 벗어나지 않도록 최대, 최소값 설정
 
-  marker_x = max(-2.0f, min(2.0f, marker_x));
+  int type = nextFruit.front();
+  float radius = fruitSize.find(type)->second;
 
-  marker_z = max(-2.0f, min(2.0f, marker_z));
+  float max_position = 2.0f - radius;   
+  float min_position = -2.0f + radius;  
+
+  marker_x = max(min_position, min(max_position, marker_x));
+  marker_z = max(min_position, min(max_position, marker_z));
 
   glutPostRedisplay();
 }

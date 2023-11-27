@@ -21,18 +21,7 @@ GLfloat light_emission[];
 
 
 void drawMainScene() {
-  switchTL(false);
 
-  glPushMatrix();
-  glScalef(2.0, 2.0, 2.0);
-  drawWireBoxWithoutTop();
-  glPopMatrix();
-
-  glPushMatrix();
-  glColor3f(0.5,0,0);
-  glScalef(2.0, 2.0, 2.0);
-  drawBoxTop();
-  glPopMatrix();
   
   glColor3f(1.0f, 1.0f, 1.0f);  // 다시 흰색으로 복구
   std::vector<int> balls_to_remove;
@@ -125,6 +114,36 @@ void drawMainScene() {
   glEnd();
 
   glColor3f(1.0f, 1.0f, 1.0f);  // 다시 흰색으로 복구
+
+  switchTL(false);
+
+
+  glPushMatrix();
+  glColor3f(0.5, 0.5, 0.5);
+  glScalef(2.0, 2.0, 2.0);
+  drawBoxLine();
+  drawBoxBottom();
+  glPopMatrix();
+
+  glPushMatrix();
+  glColor3f(0.5, 0, 0);
+  glScalef(2.0, 2.0, 2.0);
+  drawBoxTop();
+  glPopMatrix();
+
+
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  glPushMatrix();
+  glColor4f(1.0, 1.0, 1.0, 0.1);
+  glScalef(2.0, 2.0, 2.0);
+  drawWireBoxWithoutTop();
+  glPopMatrix();
+
+  glDisable(GL_BLEND);
+
+  
 }
 
 void drawNextFruitScene() {
@@ -290,7 +309,7 @@ void texturing() {
   tex[8] = auxDIBImageLoad("textures/Pineapple.bmp");
   tex[9] = auxDIBImageLoad("textures/Melon.bmp");
   tex[10] = auxDIBImageLoad("textures/Watermelon.bmp");
-  tex[11] = auxDIBImageLoad("textures/Background.bmp");
+  tex[11] = auxDIBImageLoad("textures/Background4.bmp");
 
   for (int i = 0; i < 12; i++) {
       glGenTextures(1, &ids[i]);

@@ -4,4 +4,6 @@
 
 void drawWireBoxWithoutTop();
 void drawBoxTop();
+void drawBoxLine();
+void drawBoxBottom();
 #endif
