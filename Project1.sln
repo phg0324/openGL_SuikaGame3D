@@ -5,6 +5,8 @@ VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Project1", "Project1\Project1.vcxproj", "{A0FCA470-0B1D-4BA2-B8A0-C63E5FE251B9}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SuikaGame3D", "SuikaGame3D\SuikaGame3D.vdproj", "{6B108A8E-A3A8-455F-AA29-2A096BBF6059}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,10 @@ Global
 		{A0FCA470-0B1D-4BA2-B8A0-C63E5FE251B9}.Release|x64.Build.0 = Release|x64
 		{A0FCA470-0B1D-4BA2-B8A0-C63E5FE251B9}.Release|x86.ActiveCfg = Release|Win32
 		{A0FCA470-0B1D-4BA2-B8A0-C63E5FE251B9}.Release|x86.Build.0 = Release|Win32
+		{6B108A8E-A3A8-455F-AA29-2A096BBF6059}.Debug|x64.ActiveCfg = Debug
+		{6B108A8E-A3A8-455F-AA29-2A096BBF6059}.Debug|x86.ActiveCfg = Debug
+		{6B108A8E-A3A8-455F-AA29-2A096BBF6059}.Release|x64.ActiveCfg = Release
+		{6B108A8E-A3A8-455F-AA29-2A096BBF6059}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
